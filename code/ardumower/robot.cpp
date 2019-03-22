@@ -39,7 +39,7 @@ const char* stateNames[] ={"OFF ", "RC  ", "FORW", "ROLL", "REV ", "CIRC", "ERR 
   "STREV", "STROL", "STFOR", "MANU", "ROLW", "POUTFOR", "POUTREV", "POUTROLL", "TILT", "BUMPREV", "BUMPFORW"};
 
 const char* sensorNames[] ={"SEN_PERIM_LEFT", "SEN_PERIM_RIGHT", "SEN_PERIM_LEFT_EXTRA", "SEN_PERIM_RIGHT_EXTRA", "SEN_LAWN_FRONT", "SEN_LAWN_BACK", 
-	"SEN_BAT_VOLTAGE", "SEN_CHG_CURRENT", "SEN_CHG_VOLTAGE", "SEN_MOTOR_LEFT", "SEN_MOTOR_RIGHT", "SEN_MOTOR_MOW", "SEN_BUMPER_LEFT", "SEN_BUMPER_RIGHT", 
+	"SEN_BAT_VOLTAGE", "SEN_CHG_CURRENT", "SEN_CHG_VOLTAGE", "SEN_MOTOR_LEFT", "SEN_MOTOR_RIGHT", "SEN_MOTOR1_MOW", "SEN_MOTOR2_MOW", "SEN_BUMPER_LEFT", "SEN_BUMPER_RIGHT", 
 	"SEN_DROP_LEFT", "SEN_DROP_RIGHT", "SEN_SONAR_CENTER", "SEN_SONAR_LEFT", "SEN_SONAR_RIGHT", "SEN_BUTTON", "SEN_IMU", "SEN_MOTOR_MOW_RPM", "SEN_RTC",
   "SEN_RAIN", "SEN_TILT"};
 
@@ -112,10 +112,16 @@ Robot::Robot(){
   motorMowForceOff = false;
   motorMowSpeedPWMSet = motorSpeedMaxRpm;
   motorMowPWMCurr = 0;
-  motorMowSenseADC = 0;
-  motorMowSenseCurrent  = 0;
-  motorMowSense = 0;
-  motorMowSenseCounter = 0;
+  motor1MowSenseADC = 0;
+  motor1MowSenseCurrent  = 0;
+  motor1MowSense = 0;
+  motor1MowSenseCounter = 0;
+
+  motor2MowSenseADC = 0;
+  motor2MowSenseCurrent  = 0;
+  motor2MowSense = 0;
+  motor2MowSenseCounter = 0;
+
   motorMowSenseErrorCounter = 0;
   motorMowRpmCurr = 0;
   lastMowSpeedPWM = 0;
@@ -380,21 +386,25 @@ void Robot::readSensors(){
     double accel = 0.05;
     motorRightSenseADC = readSensor(SEN_MOTOR_RIGHT);
     motorLeftSenseADC = readSensor(SEN_MOTOR_LEFT);
-    motorMowSenseADC = readSensor(SEN_MOTOR_MOW);
+    motor1MowSenseADC = readSensor(SEN_MOTOR1_MOW);
+    motor2MowSenseADC = readSensor(SEN_MOTOR2_MOW);
     
     motorRightSenseCurrent = motorRightSenseCurrent * (1.0-accel) + ((double)motorRightSenseADC) * motorSenseRightScale * accel;
     motorLeftSenseCurrent = motorLeftSenseCurrent * (1.0-accel) + ((double)motorLeftSenseADC) * motorSenseLeftScale * accel;
-    motorMowSenseCurrent = motorMowSenseCurrent * (1.0-accel) + ((double)motorMowSenseADC) * motorMowSenseScale * accel;
+    motor1MowSenseCurrent = motor1MowSenseCurrent * (1.0-accel) + ((double)motor1MowSenseADC) * motorMowSenseScale * accel;
+    motor2MowSenseCurrent = motor2MowSenseCurrent * (1.0-accel) + ((double)motor2MowSenseADC) * motorMowSenseScale * accel;
    
     if (batVoltage > 8){
       motorRightSense = motorRightSenseCurrent * batVoltage /1000;   // conversion to power in Watt
       motorLeftSense  = motorLeftSenseCurrent  * batVoltage /1000;
-      motorMowSense   = motorMowSenseCurrent   * batVoltage /1000;
+      motor1MowSense  = motor1MowSenseCurrent  * batVoltage /1000;
+      motor2MowSense  = motor2MowSenseCurrent  * batVoltage /1000;
     }
     else{
       motorRightSense = motorRightSenseCurrent * batFull /1000;   // conversion to power in Watt in absence of battery voltage measurement
       motorLeftSense  = motorLeftSenseCurrent  * batFull /1000;
-      motorMowSense   = motorMowSenseCurrent   * batFull /1000;
+      motor1MowSense  = motor1MowSenseCurrent  * batFull /1000;
+      motor2MowSense  = motor2MowSenseCurrent * batFull /1000;
     }
   
     if ((millis() - lastMotorMowRpmTime) >= 500){                  
@@ -725,13 +735,21 @@ void Robot::checkCurrent(){
     }
   }
 
-  if (motorMowSense >= motorMowPowerMax){
-    motorMowSenseCounter++;
-		setSensorTriggered(SEN_MOTOR_MOW);
+  if ((motor1MowSense >= motorMowPowerMax)
+       || (motor2MowSense >= motorMowPowerMax)){
+      if (motor1MowSense >= motorMowPowerMax){
+          motor1MowSenseCounter++;
+      		setSensorTriggered(SEN_MOTOR1_MOW);
+      }
+      if (motor2MowSense >= motorMowPowerMax){
+          motor2MowSenseCounter++;
+      		setSensorTriggered(SEN_MOTOR2_MOW);
+      }
   }
   else{ 
       errorCounterMax[ERR_MOW_SENSE] = 0;
-      motorMowSenseCounter = 0;
+      motor1MowSenseCounter = 0;
+      motor2MowSenseCounter = 0;
       if ( (lastTimeMotorMowStuck != 0) && (millis() >= lastTimeMotorMowStuck + 30000) ) { // wait 30 seconds before switching on again
         errorCounter[ERR_MOW_SENSE] = 0;
         motorMowEnable = true;
@@ -740,7 +758,8 @@ void Robot::checkCurrent(){
   }
 
 
-  if (motorMowSenseCounter >= 30){ //ignore motorMowPower for 3 seconds
+  if ((motor1MowSenseCounter >= 30)
+      || (motor2MowSenseCounter >= 30)){ //ignore motorMowPower for 3 seconds
       motorMowEnable = false;
       Console.println("Error: Motor mow current");
       addErrorCounter(ERR_MOW_SENSE);
