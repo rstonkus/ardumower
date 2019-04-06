@@ -59,7 +59,7 @@
 
 // ---- sender current control (via potentiometer) ----
 // sender modulates signal (PWM), based on duty-cycle set via this potentiometer
-#define USE_POT      1  // use potentiometer for current control? (set to '0' if not connected!)
+#define USE_POT      0  // use potentiometer for current control? (set to '0' if not connected!)
 #define pinPot      A3  // 100k potentiometer (current control)   
 
 // ---- sender automatic standby (via current sensor for charger) ----
@@ -67,7 +67,7 @@
 #define USE_CHG_CURRENT       1     // use charging current sensor for robot detection? (set to '0' if not connected!)
 #define pinChargeCurrent     A2     // ACS712-05 current sensor OUT
 #define CHG_CURRENT_MIN   0.008      // minimum Ampere for charging detection
-#define ROBOT_OUT_OF_STATION_TIMEOUT_MINS 720  // timeout for perimeter switch-off if robot not in station (minutes)
+#define ROBOT_OUT_OF_STATION_TIMEOUT_MINS 360  // timeout for perimeter switch-off if robot not in station (minutes)
 
 // ---- sender status LED ----
 #define  pinLED 13  // ON: perimeter closed, OFF: perimeter open, BLINK: robot is charging
