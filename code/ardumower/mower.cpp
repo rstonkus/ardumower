@@ -353,11 +353,12 @@ void Mower::setup(){
   // mower motor
   pinMode(pinMotorMowDir, OUTPUT); 
   pinMode(pinMotorMowPWM, OUTPUT);     
-  pinMode(pinMotorMowSense, INPUT);     
+  pinMode(pinMotor1MowSense, INPUT);  
+  pinMode(pinMotor2MowSense, INPUT);   
   pinMode(pinMotorMowRpm, INPUT);    
   pinMode(pinMotorMowEnable, OUTPUT);
   digitalWrite(pinMotorMowEnable, HIGH);  
-  pinMode(pinMotorMowFault, INPUT);      
+  pinMode(pinMotorMowFault, INPUT);     
     
   // lawn sensor
   pinMode(pinLawnBackRecv, INPUT);
@@ -423,15 +424,16 @@ void Mower::setup(){
   pinMode(pinVoltageMeasurement, INPUT);  
   
     
-  // ADC  
+// ADC  
   ADCMan.setCapture(pinChargeCurrent, 1, true);//Aktivierung des LaddeStrom Pins beim ADC-Managers      
-  ADCMan.setCapture(pinMotorMowSense, 1, true);
+  ADCMan.setCapture(pinMotor1MowSense, 1, true);
+  ADCMan.setCapture(pinMotor2MowSense, 1, true);
   ADCMan.setCapture(pinMotorLeftSense, 1, true);
   ADCMan.setCapture(pinMotorRightSense, 1, true);
   ADCMan.setCapture(pinBatteryVoltage, 1, false);
   ADCMan.setCapture(pinChargeVoltage, 1, false);  
   ADCMan.setCapture(pinVoltageMeasurement, 1, false);    
-  perimeter.setPins(pinPerimeterLeft, pinPerimeterRight);      
+  perimeter.setPins(pinPerimeterLeft, pinPerimeterRight);   
     
   imu.init();
 	  
@@ -567,10 +569,10 @@ int Mower::readSensor(char type){
   switch (type) {
 // motors------------------------------------------------------------------------------------------------
 #if defined (DRIVER_MC33926)
-    case SEN_MOTOR_MOW: return ADCMan.read(pinMotorMowSense); break;
+    case SEN_MOTOR1_MOW: return ADCMan.read(pinMotor1MowSense); break;
+    case SEN_MOTOR2_MOW: return ADCMan.read(pinMotor2MowSense); break;
     case SEN_MOTOR_RIGHT: checkMotorFault(); return ADCMan.read(pinMotorRightSense); break;
     case SEN_MOTOR_LEFT:  checkMotorFault(); return ADCMan.read(pinMotorLeftSense); break;
-    //case SEN_MOTOR_MOW_RPM: break; // not used - rpm is upated via interrupt
 #endif
 // perimeter----------------------------------------------------------------------------------------------
     case SEN_PERIM_LEFT: return perimeter.getMagnitude(0); break;

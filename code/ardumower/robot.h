@@ -72,7 +72,8 @@ enum {
   SEN_CHG_VOLTAGE,       // Volt * 100
   SEN_MOTOR_LEFT,        // 0..MAX_MOTOR_CURRENT
   SEN_MOTOR_RIGHT,       // 0..MAX_MOTOR_CURRENT
-  SEN_MOTOR_MOW,         // 0..MAX_MOW_CURRENT
+  SEN_MOTOR1_MOW,        // 0..MAX_MOW_CURRENT
+  SEN_MOTOR2_MOW,        // 0..MAX_MOW_CURRENT
   SEN_BUMPER_LEFT,       // LOW = pressed
   SEN_BUMPER_RIGHT,      // LOW = pressed
   SEN_DROP_LEFT,       // LOW = pressed                                                                                                  // Dropsensor - Absturzsensor
@@ -308,10 +309,14 @@ class Robot
     PID motorMowPID ;    // motor mower RPM PID controller    
     int motorMowSpeedPWMSet;
     float motorMowPWMCurr ;         // current speed
-    int motorMowSenseADC ; 
-    float motorMowSenseCurrent ;  // mA
-    float motorMowSense ;       // motor power (range 0..MAX_MOW_POWER)
-    int motorMowSenseCounter ;
+    int motor1MowSenseADC ;
+    int motor2MowSenseADC ; 
+    float motor1MowSenseCurrent ;  // mA
+    float motor2MowSenseCurrent ;  // mA
+    float motor1MowSense ;       // motor power (range 0..MAX_MOW_POWER)
+    float motor2MowSense ;       // motor power (range 0..MAX_MOW_POWER)
+    int motor1MowSenseCounter ;
+    int motor2MowSenseCounter ;
     int motorMowSenseErrorCounter ;
     int motorMowRpmCurr ;            // motor rpm (range 0..MOW_RPM)
     unsigned long lastMotorMowRpmTime;    
