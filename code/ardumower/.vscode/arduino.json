@@ -1,4 +1,6 @@
 {
     "sketch": "ardumower.ino",
-    "output": "build"
+    "output": "build",
+    "programmer": "AVR ISP",
+    "board": "arduino:sam:arduino_due_x_dbg"
 }
