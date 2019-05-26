@@ -35,7 +35,7 @@ Mower::Mower(){
   #if defined (ROBOT_ARDUMOWER)
 		motorPowerMax              = 75;        // motor wheel max power (Watt)		  
 		motorSpeedMaxPwm           = 255;       // motor wheel max Pwm  (8-bit PWM=255, 10-bit PWM=1023)
-		motorSpeedMaxRpm           = 30;        // motor wheel max RPM (WARNING: do not set too high, so there's still speed control when battery is low!)
+		motorSpeedMaxRpm           = 35;        // motor wheel max RPM (WARNING: do not set too high, so there's still speed control when battery is low!)
 		motorLeftPID.Kp            = 1.5;       // motor wheel PID controller
     motorLeftPID.Ki            = 0.29;
     motorLeftPID.Kd            = 0.25;
@@ -58,7 +58,7 @@ Mower::Mower(){
   motorSenseRightScale       = ADC2voltage(1)*1905;   // ADC to right motor sense milliamp 
 	motorSenseLeftScale        = ADC2voltage(1)*1905;   // ADC to left motor sense milliamp 
 	motorPowerIgnoreTime       = 2000;      // time to ignore motor power (ms)  
-  motorForwTimeMax           = 120000;     // max. forward time (ms) / timeout
+  motorForwTimeMax           = 180000;     // max. forward time (ms) / timeout
   motorBiDirSpeedRatio1      = 0.3;       // bidir mow pattern speed ratio 1
   motorBiDirSpeedRatio2      = 0.92;      // bidir mow pattern speed ratio 2
     
@@ -80,7 +80,7 @@ Mower::Mower(){
   freeWheelUse               = 0;          // has free wheel sensor?  
   
   //  ------ bumper (BumperDuino)-------------------------------
-  bumperUse                  = 0;          // has bumpers?
+  bumperUse                  = 1;          // has bumpers?
   tiltUse                    = 0;          // use tilt-sensor?
   
   //  ------ drop -----------------------------------
@@ -91,21 +91,21 @@ Mower::Mower(){
   rainUse                    = 0;          // use rain sensor?
   
   // ------ sonar ------------------------------------
-  sonarUse                   = 0;          // use ultra sonic sensor? (WARNING: robot will slow down, if enabled but not connected!)
-  sonarLeftUse               = 0;
-  sonarRightUse              = 0;
-  sonarCenterUse             = 0;
-  sonarTriggerBelow          = 15;       // ultrasonic sensor trigger distance (0=off)
-	sonarSlowBelow             = 20;     // ultrasonic sensor slow down distance
+  sonarUse                   = 1;          // use ultra sonic sensor? (WARNING: robot will slow down, if enabled but not connected!)
+  sonarLeftUse               = 1;
+  sonarRightUse              = 1;
+  sonarCenterUse             = 1;
+  sonarTriggerBelow          = 21;       // ultrasonic sensor trigger distance (0=off)
+	sonarSlowBelow             = 40;     // ultrasonic sensor slow down distance
   
   // ------ perimeter ---------------------------------
-  perimeterUse               = 0;          // use perimeter?    
+  perimeterUse               = 1;          // use perimeter?    
   perimeterTriggerTimeout    = 0;          // perimeter trigger timeout when escaping from inside (ms)  
-  perimeterOutRollTimeMax    = 2000;       // roll time max after perimeter out (ms)
-  perimeterOutRollTimeMin    = 750;        // roll time min after perimeter out (ms)
-  perimeterOutRevTime        = 1400;       // reverse time after perimeter out (ms)
-  perimeterTrackRollTime     = 1500;       // roll time during perimeter tracking
-  perimeterTrackRevTime      = 2200;       // reverse time during perimeter tracking
+  perimeterOutRollTimeMax    = 2400;       // roll time max after perimeter out (ms)
+  perimeterOutRollTimeMin    = 800;        // roll time min after perimeter out (ms)
+  perimeterOutRevTime        = 2800;       // reverse time after perimeter out (ms)
+  perimeterTrackRollTime     = 3000;       // roll time during perimeter tracking
+  perimeterTrackRevTime      = 4800;       // reverse time during perimeter tracking
   #if defined (ROBOT_ARDUMOWER)
 	  perimeterPID.Kp            = 16;       // perimeter PID controller
     perimeterPID.Ki            = 8;
@@ -171,18 +171,18 @@ Mower::Mower(){
 	 batChargingCurrentMax       = 1.6;       // maximum current your charger can devliver  
   
   // ------  charging station ---------------------------
-  stationRevTime             = 5000;       // charge station reverse time (ms)
-  stationRollTime            = 1000;       // charge station roll time (ms)
-  stationForwTime            = 5000;       // charge station forward time (ms)
-  stationCheckTime           = 3500;       // charge station reverse check time (ms)
+  stationRevTime             = 9000;       // charge station reverse time (ms)
+  stationRollTime            = 2000;       // charge station roll time (ms)
+  stationForwTime            = 9000;       // charge station forward time (ms)
+  stationCheckTime           = 5000;       // charge station reverse check time (ms)
 
   // ------ odometry ------------------------------------
   odometryUse                = 1;          // use odometry?    
   
 	#if defined (ROBOT_ARDUMOWER)
 	  odometryTicksPerRevolution = 1060;       // encoder ticks per one full resolution (without any divider)
-		wheelDiameter              = 250;        // wheel diameter (mm)
-		odometryWheelBaseCm        = 36;         // wheel-to-wheel distance (cm)
+		wheelDiameter              = 220;        // wheel diameter (mm)
+		odometryWheelBaseCm        = 40;         // wheel-to-wheel distance (cm)
 		odoLeftRightCorrection     = true;       // left-right correction for straight lines?
   #else  // ROBOT_MINI		
 		odometryTicksPerRevolution = 20;      // encoder ticks per one full resolution
@@ -198,7 +198,7 @@ Mower::Mower(){
   odometryTicksPerCm         = ((float)odometryTicksPerRevolution) / (((float)wheelDiameter)/10.0) / (2*3.1415);    // computes encoder ticks per cm (do not change)
   
   // ----- GPS -------------------------------------------
-  gpsUse                     = 0;          // use GPS?
+  gpsUse                     = 1;          // use GPS?
   stuckIfGpsSpeedBelow       = 0.2;        // if Gps speed is below given value the mower is stuck
   gpsSpeedIgnoreTime         = 5000;       // how long gpsSpeed is ignored when robot switches into a new STATE (in ms)
 
