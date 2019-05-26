@@ -729,8 +729,8 @@ void RemoteControl::sendBatteryMenu(boolean update){
   serialPort->print(robot->chgCurrent);
   serialPort->print("A");
   sendSlider("j08", F("Charge factor"), robot->chgFactor, "", 0.001, 0.01, 0.06);       
-  sendSlider("j10", F("charging starts if Voltage is below"), robot->startChargingIfBelow, "", 0.1, robot->batFull);       
-  sendSlider("j11", F("Battery is fully charged if current is below"), robot->batFullCurrent, "", 0.1, robot->batChargingCurrentMax);       
+  sendSlider("j10", F("charging starts if Voltage is below"), robot->startChargingIfBelow, "", 0.1, 32);       
+  sendSlider("j11", F("Battery is fully charged if current is below"), robot->batFullCurrent, "", 0.01, robot->batChargingCurrentMax);       
   serialPort->println("}");
 }
 
