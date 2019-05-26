@@ -71,7 +71,8 @@ Mower::Mower(){
   motorMowPowerMax           = 75.0;       // motor mower max power (Watt)
   motorMowModulate           = 0;          // motor mower cutter modulation?
   motorMowRPMSet             = 3300;       // motor mower RPM (only for cutter modulation)
-  motorMowSenseScale         = ADC2voltage(1)*1905;    // ADC to mower motor sense milliamp 
+  motorMow1SenseScale        = ADC2voltage(1)*1905;    // ADC to mower motor sense milliamp 
+  motorMow2SenseScale        = ADC2voltage(1)*1905;    // ADC to mower motor sense milliamp 
   motorMowPID.Kp             = 0.005;      // motor mower RPM PID controller
   motorMowPID.Ki             = 0.01;
   motorMowPID.Kd             = 0.01;

@@ -406,6 +406,7 @@ void RemoteControl::sendMowMenu(boolean update){
   serialPort->print(robot->motor2MowSenseCurrent);
   sendSlider("o02", F("Power max"), robot->motorMowPowerMax, "", 0.1, 100);         
   sendSlider("o03", F("calibrate mow motor 1 "), robot->motor1MowSenseCurrent, "", 1, 3000, 0); 
+  sendSlider("o16", F("calibrate mow motor 2 "), robot->motor2MowSenseCurrent, "", 1, 3000, 0); 
   serialPort->print(F("|o04~Speed "));
   serialPort->print(robot->motorMowPWMCurr);
   sendSlider("o05", F("Speed max"), robot->motorMowSpeedMaxPwm, "", 1, 255);       
@@ -423,8 +424,10 @@ void RemoteControl::sendMowMenu(boolean update){
     case 1: serialPort->print(F("Motor ON")); break;
   }
   serialPort->println(F("|o04~for config file:"));
-  serialPort->println(F("motorMowSenseScale:"));
-  serialPort->print(robot->motorMowSenseScale);
+  serialPort->println(F("motorMow1SenseScale:"));
+  serialPort->print(robot->motorMow1SenseScale);
+  serialPort->println(F("motorMow2SenseScale:"));
+  serialPort->print(robot->motorMow2SenseScale);
   serialPort->println("}");
 }
 
@@ -433,7 +436,11 @@ void RemoteControl::processMowMenu(String pfodCmd){
     else if (pfodCmd.startsWith("o12")) robot->motorMowForceOff = !robot->motorMowForceOff;
 		else if (pfodCmd.startsWith("o03")){
             processSlider(pfodCmd, robot->motor1MowSenseCurrent, 1);
-            robot->motorMowSenseScale = robot->motor1MowSenseCurrent / Max(0,(float)robot->motor1MowSenseADC);
+            robot->motorMow1SenseScale = robot->motor1MowSenseCurrent / Max(0,(float)robot->motor1MowSenseADC);
+         } 
+    else if (pfodCmd.startsWith("o16")){
+            processSlider(pfodCmd, robot->motor2MowSenseCurrent, 1);
+            robot->motorMow2SenseScale = robot->motor2MowSenseCurrent / Max(0,(float)robot->motor2MowSenseADC);
          } 
     else if (pfodCmd.startsWith("o05")) processSlider(pfodCmd, robot->motorMowSpeedMaxPwm, 1);
     else if (pfodCmd == "o06") robot->motorMowModulate = !robot->motorMowModulate;    

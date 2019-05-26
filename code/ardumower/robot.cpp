@@ -391,8 +391,8 @@ void Robot::readSensors(){
     
     motorRightSenseCurrent = motorRightSenseCurrent * (1.0-accel) + ((double)motorRightSenseADC) * motorSenseRightScale * accel;
     motorLeftSenseCurrent = motorLeftSenseCurrent * (1.0-accel) + ((double)motorLeftSenseADC) * motorSenseLeftScale * accel;
-    motor1MowSenseCurrent = motor1MowSenseCurrent * (1.0-accel) + ((double)motor1MowSenseADC) * motorMowSenseScale * accel;
-    motor2MowSenseCurrent = motor2MowSenseCurrent * (1.0-accel) + ((double)motor2MowSenseADC) * motorMowSenseScale * accel;
+    motor1MowSenseCurrent = motor1MowSenseCurrent * (1.0-accel) + ((double)motor1MowSenseADC) * motorMow1SenseScale * accel;
+    motor2MowSenseCurrent = motor2MowSenseCurrent * (1.0-accel) + ((double)motor2MowSenseADC) * motorMow2SenseScale * accel;
    
     if (batVoltage > 8){
       motorRightSense = motorRightSenseCurrent * batVoltage /1000;   // conversion to power in Watt

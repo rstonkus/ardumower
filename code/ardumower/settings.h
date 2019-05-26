@@ -65,7 +65,8 @@ void Robot::loadSaveUserSettings(boolean readflag){
   eereadwrite(readflag, addr, motorMowSpeedMaxPwm);
   eereadwrite(readflag, addr, motorMowPowerMax);
   eereadwrite(readflag, addr, motorMowRPMSet);
-  eereadwrite(readflag, addr, motorMowSenseScale);
+  eereadwrite(readflag, addr, motorMow1SenseScale);
+  eereadwrite(readflag, addr, motorMow2SenseScale);
   eereadwrite(readflag, addr, motorLeftPID.Kp);
   eereadwrite(readflag, addr, motorLeftPID.Ki);
   eereadwrite(readflag, addr, motorLeftPID.Kd);
@@ -241,8 +242,10 @@ void Robot::printSettingSerial(){
   Console.println(motorMowModulate,1);
   Console.print  (F("motorMowRPMSet                             : "));  
   Console.println(motorMowRPMSet);
-  Console.print  (F("motorMowSenseScale                         : "));
-  Console.println(motorMowSenseScale); 
+  Console.print  (F("motorMow1SenseScale                         : "));
+  Console.println(motorMow1SenseScale);
+  Console.print  (F("motorMow2SenseScale                         : "));
+  Console.println(motorMow2SenseScale); 
   Console.print  (F("motorMowPID.Kp                             : "));
   Console.println(motorMowPID.Kp);
   Console.print  (F("motorMowPID.Ki                             : "));

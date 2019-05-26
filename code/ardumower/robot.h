@@ -305,7 +305,8 @@ class Robot
     float motorMowPowerMax ;     // motor mower max power (Watt)
     char motorMowModulate  ;      // motor mower cutter modulation?
     int motorMowRPMSet        ;   // motor mower RPM (only for cutter modulation)
-    float motorMowSenseScale ; // motor mower sense scale (mA=(ADC-zero)/scale)
+    float motorMow1SenseScale ; // motor mower 1 sense scale (mA=(ADC-zero)/scale)
+    float motorMow2SenseScale ; // motor mower 2 sense scale (mA=(ADC-zero)/scale)
     PID motorMowPID ;    // motor mower RPM PID controller    
     int motorMowSpeedPWMSet;
     float motorMowPWMCurr ;         // current speed
