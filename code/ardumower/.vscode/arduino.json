@@ -1,7 +1,8 @@
 {
     "sketch": "ardumower.ino",
     "output": "build",
-    "programmer": "AVR ISP",
+    "programmer": "ArduinoISP",
     "board": "arduino:sam:arduino_due_x_dbg",
-    "arduino.enableUSBDetection": false
+    "arduino.enableUSBDetection": false,
+    "port": "COM7"
 }
