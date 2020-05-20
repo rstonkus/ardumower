@@ -37,8 +37,8 @@ Mower::Mower(){
 		motorSpeedMaxPwm           = 255;       // motor wheel max Pwm  (8-bit PWM=255, 10-bit PWM=1023)
 		motorSpeedMaxRpm           = 35;        // motor wheel max RPM (WARNING: do not set too high, so there's still speed control when battery is low!)
 		motorLeftPID.Kp            = 1.5;       // motor wheel PID controller
-    motorLeftPID.Ki            = 0.29;
-    motorLeftPID.Kd            = 0.25;
+    motorLeftPID.Ki            = 0.0;
+    motorLeftPID.Kd            = 0.0;
     motorZeroSettleTime        = 3000 ;     // how long (ms) to wait for motors to settle at zero speed
 		motorReverseTime           = 1200;      // max. reverse time (ms)
 		motorRollTimeMax           = 1500;      // max. roll time (ms)
@@ -96,14 +96,14 @@ Mower::Mower(){
   sonarLeftUse               = 1;
   sonarRightUse              = 1;
   sonarCenterUse             = 1;
-  sonarTriggerBelow          = 21;       // ultrasonic sensor trigger distance (0=off)
+  sonarTriggerBelow          = 30;       // ultrasonic sensor trigger distance (0=off)
 	sonarSlowBelow             = 40;     // ultrasonic sensor slow down distance
   
   // ------ perimeter ---------------------------------
   perimeterUse               = 1;          // use perimeter?    
   perimeterTriggerTimeout    = 0;          // perimeter trigger timeout when escaping from inside (ms)  
   perimeterOutRollTimeMax    = 2400;       // roll time max after perimeter out (ms)
-  perimeterOutRollTimeMin    = 800;        // roll time min after perimeter out (ms)
+  perimeterOutRollTimeMin    = 1200;        // roll time min after perimeter out (ms)
   perimeterOutRevTime        = 2800;       // reverse time after perimeter out (ms)
   perimeterTrackRollTime     = 3000;       // roll time during perimeter tracking
   perimeterTrackRevTime      = 4800;       // reverse time during perimeter tracking
@@ -125,13 +125,13 @@ Mower::Mower(){
   lawnSensorUse     = 0;                   // use capacitive lawn Sensor
   
   // ------  IMU (compass/accel/gyro) ----------------------
-  imuUse                     = 0;          // use IMU?
+  imuUse                     = 1;          // use IMU?
   imuCorrectDir              = 1;          // correct direction by compass?
-  imuDirPID.Kp               = 5.0;        // direction PID controller
-  imuDirPID.Ki               = 1.0;
-  imuDirPID.Kd               = 1.0;    
-  imuRollPID.Kp              = 0.8;        // roll PID controller
-  imuRollPID.Ki              = 21;
+  imuDirPID.Kp               = 0.6;        // direction PID controller
+  imuDirPID.Ki               = 0.0;
+  imuDirPID.Kd               = 0.0;    
+  imuRollPID.Kp              = 0.2;        // roll PID controller
+  imuRollPID.Ki              = 1.8;
   imuRollPID.Kd              = 0;  
   
   // ------ model R/C ------------------------------------
@@ -143,7 +143,7 @@ Mower::Mower(){
 		batSwitchOffIfBelow        = 21;       // switch off battery if below voltage (Volt)
 		batGoHomeIfBelow           = 23.5;       // drive home voltage (Volt)  	
 		startChargingIfBelow       = 32.0;      // start charging if battery Voltage is below (99999=disabled)
-		batFull                    = 29;      // battery reference Voltage (fully charged) PLEASE ADJUST IF USING A DIFFERENT BATTERY VOLTAGE! FOR a 12V SYSTEM TO 14.4V		
+		batFull                    = 29.6;      // battery reference Voltage (fully charged) PLEASE ADJUST IF USING A DIFFERENT BATTERY VOLTAGE! FOR a 12V SYSTEM TO 14.4V		
 		batFullCurrent             = 0.01;       // current flowing when battery is fully charged	(amp), (-99999=disabled)	
 	#else  // ROBOT_MINI
 		batMonitor                 = 1;          // monitor battery and charge voltage?
@@ -162,7 +162,7 @@ Mower::Mower(){
 		batChgFactor               = voltageDividerUges(47, 5.1, 1.0)*ADC2voltage(1)*10;   // ADC to battery voltage factor *10	
 		chgFactor                  = ADC2voltage(1)*10;        // ADC to charging current ampere factor  (see mower.h for macros)								  
   #elif defined (PCB_1_3)   // PCB 1.3
-		batSwitchOffIfIdle         = 8;          // switch off battery if idle (minutes, 0=off) 
+		batSwitchOffIfIdle         = 120;          // switch off battery if idle (minutes, 0=off) 
   	batFactor                  = voltageDividerUges(100, 10, 1.0)*ADC2voltage(1)*10;   // ADC to battery voltage factor *10
 		batChgFactor               = voltageDividerUges(100, 10, 1.0)*ADC2voltage(1)*10;   // ADC to battery voltage factor *10
 		chgFactor                  = ADC2voltage(1)*5;        // ADC to charging current ampere factor  (see mower.h for macros)	
@@ -212,7 +212,7 @@ Mower::Mower(){
   userSwitch3                = 0;          // user-defined switch 3 (default value)
 
   // ----- timer -----------------------------------------
-  timerUse                   = 1;          // use RTC and timer?
+  timerUse                   = 0;          // use RTC and timer?
 
   // ----- bluetooth -------------------------------------
   bluetoothUse               = 1;          // use Bluetooth module?  (WARNING: if enabled, you cannot use ESP8266)
@@ -395,11 +395,11 @@ void Mower::setup(){
   
   // sonar
   pinMode(pinSonarCenterTrigger, OUTPUT); 
-  pinMode(pinSonarCenterEcho, INPUT); 
+  pinMode(pinSonarCenterEcho, INPUT_PULLUP); 
   pinMode(pinSonarLeftTrigger, OUTPUT); 
-  pinMode(pinSonarLeftEcho, INPUT); 
+  pinMode(pinSonarLeftEcho, INPUT_PULLUP); 
   pinMode(pinSonarRightTrigger, OUTPUT); 
-  pinMode(pinSonarRightEcho, INPUT); 
+  pinMode(pinSonarRightEcho, INPUT_PULLUP); 
   
   // rain
   pinMode(pinRain, INPUT);
@@ -659,5 +659,3 @@ void Mower::configureBluetooth(boolean quick){
   BluetoothConfig bt;
   bt.setParams(name, BLUETOOTH_PIN, BLUETOOTH_BAUDRATE, quick);
 }
-
-
