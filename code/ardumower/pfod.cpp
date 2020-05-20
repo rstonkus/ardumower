@@ -757,7 +757,7 @@ void RemoteControl::processBatteryMenu(String pfodCmd){
     //else if (pfodCmd.startsWith("j09")) processSlider(pfodCmd, robot->batChgFactor, 0.01);
     else if (pfodCmd.startsWith("j09")) processSlider(pfodCmd, robot->batChgFactor, 0.001);
     else if (pfodCmd.startsWith("j10")) processSlider(pfodCmd, robot->startChargingIfBelow, 0.1);
-    else if (pfodCmd.startsWith("j11")) processSlider(pfodCmd, robot->batFullCurrent, 0.1);
+    else if (pfodCmd.startsWith("j11")) processSlider(pfodCmd, robot->batFullCurrent, 0.0);
     else if (pfodCmd.startsWith("j12")) processSlider(pfodCmd, robot->batSwitchOffIfIdle, 1);
   sendBatteryMenu(true);
 }
