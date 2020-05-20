@@ -708,22 +708,34 @@ void RemoteControl::processRemoteMenu(String pfodCmd){
 
 void RemoteControl::sendBatteryMenu(boolean update){
   if (update) serialPort->print("{:"); else serialPort->print(F("{.Battery`1000"));
+  serialPort->print(F("|j01~Monitor "));
+  sendYesNo(robot->batMonitor);
   serialPort->print(F("|j00~Battery "));
   serialPort->print(robot->batVoltage);
   serialPort->print(" V");
-  serialPort->print(F("|j01~Monitor "));
-  sendYesNo(robot->batMonitor);
+  if (robot->developerActive)
+  {
+    sendSlider("j05", F("Calibrate batFactor "), robot->batFactor, "", 0.001, 0.30, 0.55);
+  }
   
   //bb remove
   //if (robot->developerActive) sendSlider("j05", F("Calibrate batFactor "), robot->batFactor, "", 0.01, 1.0);   
   //bb remove end
   //bb add
+  //end add
+  
+  serialPort->print(F("|j04~Charge "));
+  serialPort->print(robot->chgVoltage);
+  serialPort->print("V ");
+  serialPort->print(robot->chgCurrent);
+  serialPort->print("A");
+  
   if (robot->developerActive)
   {
     sendSlider("j09", F("Calibrate batChgFactor"), robot->batChgFactor, "", 0.001, 0.30, 0.55);
-    sendSlider("j05", F("Calibrate batFactor "), robot->batFactor, "", 0.001, 0.30, 0.55);
+    sendSlider("j08", F("Charge factor"), robot->chgFactor, "", 0.001, 0.01, 0.06);   
   }
-  //end add
+
   
   //Console.print("batFactor=");
   //Console.println(robot->batFactor);   
