@@ -927,7 +927,7 @@ void Robot::checkPerimeterBoundary(){
         }
       }
     } 
-    else if ((stateCurr == STATE_ROLL)) {
+    else if ((stateCurr == STATE_ROLL) || (stateCurr == STATE_REVERSE)) {
       if (perimeterTriggerTime != 0) {
         if (millis() >= perimeterTriggerTime){ 
           perimeterTriggerTime = 0;
