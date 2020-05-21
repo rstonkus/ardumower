@@ -1217,35 +1217,32 @@ void Robot::setNextState(byte stateNew, byte dir){
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm/1.25;                    
     stateEndTime = millis() + perimeterOutRevTime + motorZeroSettleTime; 
   }
-  else if (stateNew == STATE_PERI_OUT_ROLL){
-  
-  
-  
+  else if (stateNew == STATE_PERI_OUT_ROLL) {
   	//Ehl
-	//imuDriveHeading = scalePI(imuDriveHeading + PI); // toggle heading 180 degree (IMU)
-	if (imuRollDir == LEFT)
-	{
-		imuDriveHeading = scalePI(imuDriveHeading - random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
-		imuRollHeading = scalePI(imuDriveHeading);
-		imuRollDir = rollDir;
-	}
-	else
-	{
-		imuDriveHeading = scalePI(imuDriveHeading + random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
-		imuRollHeading = scalePI(imuDriveHeading);
-		imuRollDir = rollDir;
-	}
-	stateEndTime = millis() + random(perimeterOutRollTimeMin,perimeterOutRollTimeMax) + motorZeroSettleTime;
-	if (dir == RIGHT)
-	{
-		motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
-		motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;           
-	}
-	else
-	{
-		motorRightSpeedRpmSet = motorSpeedMaxRpm/1.25;
-		motorLeftSpeedRpmSet = -motorRightSpeedRpmSet; 
-	}
+	  //imuDriveHeading = scalePI(imuDriveHeading + PI); // toggle heading 180 degree (IMU)
+	  if (imuRollDir == LEFT)
+	  {
+		  imuDriveHeading = scalePI(imuDriveHeading - random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
+		  imuRollHeading = scalePI(imuDriveHeading);
+		  imuRollDir = rollDir;
+	  }
+	  else
+	  {
+		  imuDriveHeading = scalePI(imuDriveHeading + random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
+		  imuRollHeading = scalePI(imuDriveHeading);
+		  imuRollDir = rollDir;
+	  }
+	  stateEndTime = millis() + random(perimeterOutRollTimeMin,perimeterOutRollTimeMax) + motorZeroSettleTime;
+    if (dir == RIGHT)
+    {
+      motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
+      motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;           
+    }
+    else
+    {
+      motorRightSpeedRpmSet = motorSpeedMaxRpm/1.25;
+      motorLeftSpeedRpmSet = -motorRightSpeedRpmSet; 
+    }
   }
   else if (stateNew == STATE_FORWARD){      
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = motorSpeedMaxRpm;  
