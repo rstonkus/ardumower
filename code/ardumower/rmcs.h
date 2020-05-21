@@ -85,7 +85,8 @@ void Robot::rmcsSendMotorCurrent(Stream &s, char motormowtrigger, char motorleft
     Streamprint(s, "$RMMOT,%6u,", (millis()-stateStartTime)/1000);
     Streamprint(s, "%4d ,",(int)motorLeftSense);                         
     Streamprint(s, "%4d ,",(int)motorRightSense);                   
-    Streamprint(s, "%4d ,",(int)motorMowSense);
+    Streamprint(s, "%4d ,",(int)motor1MowSense);
+    Streamprint(s, "%4d ,",(int)motor2MowSense);
     Streamprint(s, "%4d ,",motorlefttrigger);                
     Streamprint(s, "%4d ,",motorrighttrigger);           
     Streamprint(s, "%4d ",motormowtrigger);  
@@ -532,7 +533,8 @@ void Robot::processRMCSCommand(String command){
         }
         break;   
 
-        case SEN_MOTOR_MOW:
+        case SEN_MOTOR1_MOW:
+        case SEN_MOTOR2_MOW:
         if (rmcsTriggerMotor)
         {
           rmcsSendMotorCurrent(Console,1,0,0);
