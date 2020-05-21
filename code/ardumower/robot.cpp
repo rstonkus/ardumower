@@ -1655,7 +1655,14 @@ void Robot::loop()  {
       //if (perimeterInside || (millis() >= stateEndTime)) setNextState (STATE_PERI_OUT_ROLL, rollDir); 
       break;
     case STATE_PERI_OUT_ROLL: 
-      if (millis() >= stateEndTime) setNextState(STATE_FORWARD,0);                
+      // making a roll (left/right)            
+      if (mowPatternCurr == MOW_LANES){
+        if (abs(distancePI(imu.ypr.yaw, imuRollHeading)) < PI/36) setNextState(STATE_FORWARD,0);				        
+      } else {
+        if (millis() >= stateEndTime) {
+          setNextState(STATE_FORWARD,0);				          
+        }        
+      }               
       break;
 
     case STATE_STATION_CHECK:
