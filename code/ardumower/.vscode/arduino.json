@@ -1,7 +1,7 @@
 {
     "sketch": "ardumower.ino",
     "output": "build",
-    "programmer": "ArduinoISP",
+    "programmer": "AVRISP mkII",
     "board": "arduino:sam:arduino_due_x_dbg",
     "arduino.enableUSBDetection": false,
     "port": "COM7"
