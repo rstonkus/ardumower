@@ -1220,7 +1220,7 @@ void Robot::setNextState(byte stateNew, byte dir){
   else if (stateNew == STATE_PERI_OUT_ROLL) {
   	//Ehl
 	  //imuDriveHeading = scalePI(imuDriveHeading + PI); // toggle heading 180 degree (IMU)
-	  if (imuRollDir == LEFT)
+	  if (rollDir == LEFT)
 	  {
 		  imuDriveHeading = scalePI(imuDriveHeading - random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
 		  imuRollHeading = scalePI(imuDriveHeading);
@@ -1262,23 +1262,23 @@ void Robot::setNextState(byte stateNew, byte dir){
     stateEndTime = millis() + motorReverseTime + motorZeroSettleTime;
   }  
 	else if (stateNew == STATE_ROLL) {                  
-      if (imuRollDir == LEFT){
-        imuDriveHeading = scalePI(imuDriveHeading - PI/2); // toggle heading 90 degree (IMU)
-        imuRollHeading = scalePI(imuDriveHeading);        
-        imuRollDir = RIGHT;
-      } else {
+    if (rollDir == LEFT){
+      imuDriveHeading = scalePI(imuDriveHeading - PI/2); // toggle heading 90 degree (IMU)
+      imuRollHeading = scalePI(imuDriveHeading);        
+      imuRollDir = rollDir;
+    } else {
         imuDriveHeading = scalePI(imuDriveHeading + PI/2); // toggle heading 90 degree (IMU)
         imuRollHeading = scalePI(imuDriveHeading);        
-        imuRollDir = LEFT;
-      }      
-      stateEndTime = millis() + random(motorRollTimeMin,motorRollTimeMax) + motorZeroSettleTime;
-      if (dir == RIGHT){
-	     motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
-	     motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;						
-      } else {
-	     motorRightSpeedRpmSet = motorSpeedMaxRpm/1.25;
-	     motorLeftSpeedRpmSet = -motorRightSpeedRpmSet;	
-      }      
+        imuRollDir = rollDir;
+    }      
+    stateEndTime = millis() + random(motorRollTimeMin,motorRollTimeMax) + motorZeroSettleTime;
+    if (dir == RIGHT){
+	    motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
+	    motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;						
+    } else {
+	    motorRightSpeedRpmSet = motorSpeedMaxRpm/1.25;
+	    motorLeftSpeedRpmSet = -motorRightSpeedRpmSet;	
+    }      
   }  
   if (stateCurr == STATE_STATION_CHARGING) {
 		// always switch off charging relay if leaving state STATE_STATION_CHARGING
