@@ -436,11 +436,11 @@ void RemoteControl::processMowMenu(String pfodCmd){
     else if (pfodCmd.startsWith("o12")) robot->motorMowForceOff = !robot->motorMowForceOff;
 		else if (pfodCmd.startsWith("o03")){
             processSlider(pfodCmd, robot->motor1MowSenseCurrent, 1);
-            robot->motorMow1SenseScale = robot->motor1MowSenseCurrent / Max(0,(float)robot->motor1MowSenseADC);
+            robot->motorMow1SenseScale = robot->motor1MowSenseCurrent / Max(1,(float)robot->motor1MowSenseADC);
          } 
     else if (pfodCmd.startsWith("o16")){
             processSlider(pfodCmd, robot->motor2MowSenseCurrent, 1);
-            robot->motorMow2SenseScale = robot->motor2MowSenseCurrent / Max(0,(float)robot->motor2MowSenseADC);
+            robot->motorMow2SenseScale = robot->motor2MowSenseCurrent / Max(1,(float)robot->motor2MowSenseADC);
          } 
     else if (pfodCmd.startsWith("o05")) processSlider(pfodCmd, robot->motorMowSpeedMaxPwm, 1);
     else if (pfodCmd == "o06") robot->motorMowModulate = !robot->motorMowModulate;    
