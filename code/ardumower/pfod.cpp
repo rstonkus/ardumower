@@ -1246,8 +1246,6 @@ void RemoteControl::run(){
       serialPort->print(",");
       serialPort->print(robot->imu.gyro.z/PI*180);
       serialPort->print(",");
-      serialPort->print(robot->imu.imuResetSuccessCounter);
-      serialPort->print(",");
       serialPort->print(robot->imu.acc.x);
       serialPort->print(",");
       serialPort->print(robot->imu.acc.y);
@@ -1259,6 +1257,8 @@ void RemoteControl::run(){
       serialPort->print(robot->imu.com.y);
       serialPort->print(",");
       serialPort->print(robot->imu.com.z);
+      serialPort->print(",");
+      serialPort->print(robot->imu.imuResetSuccessCounter);
       serialPort->print(",");
       float lat, lon;
       unsigned long age;
