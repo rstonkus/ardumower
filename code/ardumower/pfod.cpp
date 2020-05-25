@@ -1494,7 +1494,7 @@ bool RemoteControl::readSerial(){
         else if (pfodCmd == "m1") {
           // log raw sensors
           serialPort->println(F("{=Log sensors}"));
-          serialPort->print(F("time,leftsen,rightsen,mowsen,sonleft,soncenter,sonright,"));
+          serialPort->print(F("time,leftsen,rightsen,mow1sen,mow2sen,sonleft,soncenter,sonright,"));
           serialPort->print(F("perinside,permag,odoleft,odoright,yaw,pitch,roll,gyrox,gyroy,"));
           serialPort->print(F("gyroz,accx,accy,accz,comx,comy,comz,rst,hdop,sats,gspeed,gcourse,"));
           serialPort->println(F("galt,lat,lon"));
