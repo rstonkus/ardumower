@@ -512,9 +512,9 @@ class Robot
 	unsigned long RMCS_interval_bumper;
 	unsigned long RMCS_interval_odometry;
 	unsigned long RMCS_interval_perimeter;
-    unsigned long RMCS_interval_gps;  
-    unsigned long RMCS_interval_drop;
-    unsigned long RMCS_interval_imu;
+  unsigned long RMCS_interval_gps;  
+  unsigned long RMCS_interval_drop;
+  unsigned long RMCS_interval_imu;
 	unsigned long nextTimeRMCSInfo;
     unsigned long rmcsInfoLastSendState;
     unsigned long rmcsInfoLastSendMotorCurrent;
@@ -680,6 +680,9 @@ protected:
 		virtual float voltageDividerUges(float R1, float R2, float U2);	
 		// ADC-value to voltage
 		virtual float ADC2voltage(float ADCvalue);
+
+  private:
+    void changeState();
 
 };    
 
