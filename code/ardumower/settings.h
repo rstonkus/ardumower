@@ -31,7 +31,6 @@ void Robot::loadSaveErrorCounters(boolean readflag){
   if ((readflag) && (magic != MAGIC)) {
     Console.println(F("EEPROM ERROR DATA: NO ERROR COUNTERS FOUND"));    
     //addErrorCounter(ERR_EEPROM_DATA);
-    //setNextState(STATE_ERROR, 0);
     return;
   }
   eereadwrite(readflag, addr, errorCounterMax);  
@@ -47,7 +46,6 @@ void Robot::loadSaveUserSettings(boolean readflag){
   if ((readflag) && (magic != MAGIC)) {
     Console.println(F("EEPROM USER SETTINGS: NO EEPROM USER SETTINGS FOUND"));    
     //addErrorCounter(ERR_EEPROM_DATA);
-    //setNextState(STATE_ERROR, 0);
     return;
   }
   eereadwrite(readflag, addr, developerActive);          
@@ -587,7 +585,7 @@ void Robot::checkErrorCounter(){
    for (int i=0; i < ERR_ENUM_COUNT; i++){
      // set to fatal error if any temporary error counter reaches 10
      if (errorCounter[i] > 10) {       
-       setNextState(STATE_ERROR, 0);
+       setNextState(STATE_ERROR, 0, true);
      }
     }
   }  

@@ -203,7 +203,7 @@ void Robot::motorControlPerimeter() {
 				Console.println(F("Error: tracking error"));
 				addErrorCounter(ERR_TRACKING);
 				//setNextState(STATE_ERROR,0);
-				setNextState(STATE_PERI_FIND, 0);
+				setNextState(STATE_PERI_FIND, 0, true);
 			}
 			// out of the fonction until the next loop  
 			return;
@@ -308,7 +308,7 @@ void Robot::checkOdometryFaults(){
     Console.print("\tRPM=");
     Console.println(motorLeftRpmCurr);
     addErrorCounter(ERR_ODOMETRY_LEFT);
-    setNextState(STATE_ERROR, 0);
+    setNextState(STATE_ERROR, 0, true);
   }
   if (rightErr){
     Console.print("Right odometry error: PWM=");
@@ -316,7 +316,7 @@ void Robot::checkOdometryFaults(){
     Console.print("\tRPM=");
     Console.println(motorRightRpmCurr);
     addErrorCounter(ERR_ODOMETRY_RIGHT);
-    setNextState(STATE_ERROR, 0);
+    setNextState(STATE_ERROR, 0, true);
   }
 }
 
@@ -407,13 +407,8 @@ void Robot::motorMowControl(){
     setMotorMowPWM(mowSpeed, true);
   } 
   else {
-    //if ((motorMowModulate) && (motorMowRpmCurr != 0)){
-      // speed sensor available
     if (motorMowModulate){
-
-
       if (mowSpeed <motorMowRPMSet ){
-
         mowSpeed = lastMowSpeedPWM + 200;
         if (mowSpeed >motorMowRPMSet) mowSpeed = motorMowRPMSet;
       } else if (mowSpeed >motorMowRPMSet ){

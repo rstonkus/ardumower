@@ -555,7 +555,8 @@ class Robot
     virtual void setMotorMowRPMState(boolean motorMowRpmState);
 
     // state machine
-    virtual void setNextState(byte stateNew, byte dir);    
+    virtual void setNextState(byte stateNew, byte dir);
+    virtual void setNextState(byte stateNew, byte dir, bool immediate);
     
     // motor
     virtual void setMotorPWM(int pwmLeft, int pwmRight, boolean useAccel);    
