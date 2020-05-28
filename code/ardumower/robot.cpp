@@ -175,8 +175,8 @@ Robot::Robot(){
   chgVoltage = 0;
   chgCurrent = 0;
     
-  memset(errorCounterMax, 0, sizeof errorCounterMax);
-  memset(errorCounter, 0, sizeof errorCounterMax);
+  memset(errorCounterMax,0,sizeof(errorCounterMax));
+  memset(errorCounter,0,sizeof(errorCounterMax));
     
   loopsPerSec = 0;
 	loopsPerSecLowCounter = 0;
@@ -298,7 +298,7 @@ void Robot::setup()  {
   
   if (!buttonUse){
     // robot has no ON/OFF button => start immediately
-    setNextState(STATE_FORWARD,0);
+    setNextState(STATE_FORWARD,0, true);
   }  
     
   stateStartTime = millis();  
@@ -388,19 +388,10 @@ void Robot::checkButton(){
         // drive home
         setNextState(STATE_PERI_FIND, 0);        
       } else if (buttonCounter == 1){
-        /*if ((perimeterUse) && (!perimeter.isInside())){
-          Console.println("start inside perimeter!");
-          addErrorCounter(ERR_PERIMETER_TIMEOUT);
-          setNextState(STATE_ERROR, 0);                          
-        } else {*/
-          // start normal with mowing        
-          motorMowEnable = true;
-          //motorMowModulate = true;                     
-          mowPatternCurr = MOW_RANDOM;   
-          setNextState(STATE_FORWARD, 0);                
-        //}
+        motorMowEnable = true;
+        mowPatternCurr = MOW_RANDOM;   
+        setNextState(STATE_FORWARD, 0);                
       } 
-      
       buttonCounter = 0;                 
     }       
   }
@@ -445,8 +436,6 @@ void Robot::readSensors(){
       lastMotorMowRpmTime = millis();     
       if (!ADCMan.calibrationDataAvail()) {
         //Console.println(F("Error: missing ADC calibration data"));
-        //addErrorCounter(ERR_ADC_CALIB);
-        //setNextState(STATE_ERROR, 0);
       }
     }
   }  
@@ -488,7 +477,7 @@ void Robot::readSensors(){
         && (stateCurr != STATE_PERI_OUT_REV) && (stateCurr != STATE_PERI_OUT_ROLL) && (stateCurr != STATE_PERI_TRACK)) {
         Console.println("Error: perimeter too far away");
         addErrorCounter(ERR_PERIMETER_TIMEOUT);
-        setNextState(STATE_ERROR,0);
+        setNextState(STATE_ERROR,0,true);
       }
     }
   }
@@ -538,12 +527,7 @@ void Robot::readSensors(){
       default:
         senSonarTurn = SEN_SONAR_CENTER;
         break;
-    }   
-/*
-    if (sonarRightUse) sonarDistRight = readSensor(SEN_SONAR_RIGHT);    
-    if (sonarLeftUse) sonarDistLeft = readSensor(SEN_SONAR_LEFT);    
-    if (sonarCenterUse) sonarDistCenter = readSensor(SEN_SONAR_CENTER); 
-*/         
+    }       
   }
 
   if ((freeWheelUse) && (millis() >= nextTimeFreeWheel)){    
@@ -606,7 +590,7 @@ void Robot::readSensors(){
     if (!imu.calibrationAvail) {
       Console.println(F("Error: missing IMU calibration data"));
       addErrorCounter(ERR_IMU_CALIB);
-      setNextState(STATE_ERROR, 0);
+      setNextState(STATE_ERROR, 0, true);
     }
   }
 
@@ -669,7 +653,6 @@ void Robot::receiveGPSTime(){
       Console.println(F("GPS communication error!"));      
       addErrorCounter(ERR_GPS_COMM);
       // next line commented out as GPS communication may not be available if GPS signal is poor
-      //setNextState(STATE_ERROR, 0);
     }
     Console.print(F("GPS sentences: "));    
     Console.println(good_sentences);    
@@ -1057,11 +1040,8 @@ void Robot::checkTilt(){
       Console.println(F("Error: IMU tilt"));
       addErrorCounter(ERR_IMU_TILT);
 			setSensorTriggered(SEN_TILT);
-      setNextState(STATE_ERROR,0);
+      setNextState(STATE_ERROR,0,true);
     }
-  }
-  if (stateCurr == STATE_ERROR){
-    //if ( (abs(pitchAngle) < 40) && (abs(rollAngle) < 40) ) setNextState(STATE_FORWARD,0);
   }
 }
 
@@ -1101,7 +1081,7 @@ void Robot::checkIfStuck(){
       if (errorCounterMax[ERR_STUCK] >= 3){   // robot is definately stuck and unable to move
         Console.println(F("Error: Mower is stuck"));
         addErrorCounter(ERR_STUCK);
-        setNextState(STATE_ERROR,0);    //mower is switched into ERROR
+        setNextState(STATE_ERROR,0,true);    //mower is switched into ERROR
         //robotIsStuckCounter = 0;
       }
       else if (errorCounter[ERR_STUCK] < 3) {   // mower tries 3 times to get unstuck
@@ -1154,13 +1134,11 @@ const char* Robot::stateName(){
   return stateNames[stateCurr];
 }
 
-
-// set state machine new state
-// http://wiki.ardumower.de/images/f/ff/Ardumower_states.png
-// called *ONCE* to set to a *NEW* state
-void Robot::setNextState(byte stateNew, byte dir){
+void Robot::setNextState(byte stateNew, byte dir, bool immediate) {
   unsigned long stateTime = millis() - stateStartTime;
-  if (stateNew == stateCurr) return;
+  if (stateNew == stateCurr // proposed state is the same as new
+    || stateCurr != stateNext) // state has already changed 
+    return;
   // state correction  
 	if ((stateNew == STATE_ERROR) && (stateCurr == STATE_STATION_CHARGING)) {
 		stateNew = STATE_STATION_CHARGING; // do not enter ERROR state when charging
@@ -1178,62 +1156,72 @@ void Robot::setNextState(byte stateNew, byte dir){
   // evaluate new state
   stateNext = stateNew;
   rollDir = dir;
-  if (stateNew == STATE_STATION_REV){
+  if (immediate) changeState();
+}
+
+void Robot::setNextState(byte stateNew, byte dir){
+  setNextState(stateNew, dir, false);
+}
+
+// set state machine new state
+// http://wiki.ardumower.de/images/f/ff/Ardumower_states.png
+// called *ONCE* to set to a *NEW* state
+void Robot::changeState(){
+  if (stateNext == STATE_STATION_REV){
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm;                    
     stateEndTime = millis() + stationRevTime + motorZeroSettleTime;                     
 		setActuator(ACT_CHGRELAY, 0);         
-  } else if (stateNew == STATE_STATION_ROLL){
+  } else if (stateNext == STATE_STATION_ROLL){
     motorLeftSpeedRpmSet = motorSpeedMaxRpm;
     motorRightSpeedRpmSet = -motorSpeedMaxRpm;						      
     stateEndTime = millis() + stationRollTime + motorZeroSettleTime;                     
-  } else if (stateNew == STATE_STATION_FORW){
+  } else if (stateNext == STATE_STATION_FORW){
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = motorSpeedMaxRpm;      
     motorMowEnable = true;    
     stateEndTime = millis() + stationForwTime + motorZeroSettleTime;                     
-  } else if (stateNew == STATE_STATION_CHECK){
+  } else if (stateNext == STATE_STATION_CHECK){
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm/2; 
     stateEndTime = millis() + stationCheckTime + motorZeroSettleTime; 
 		setActuator(ACT_CHGRELAY, 0);         
     motorMowEnable = false;
   
-  } else if (stateNew == STATE_PERI_ROLL) {    
+  } else if (stateNext == STATE_PERI_ROLL) {    
     stateEndTime = millis() + perimeterTrackRollTime + motorZeroSettleTime;                     
-    if (dir == RIGHT){
+    if (rollDir == RIGHT){
 	    motorLeftSpeedRpmSet = motorSpeedMaxRpm/2;
 	    motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;						
       } else {
 	    motorRightSpeedRpmSet = motorSpeedMaxRpm/2;
 	    motorLeftSpeedRpmSet = -motorRightSpeedRpmSet;	
       }
-  } if (stateNew == STATE_PERI_REV) {
+  } if (stateNext == STATE_PERI_REV) {
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm/2;                    
     stateEndTime = millis() + perimeterTrackRevTime + motorZeroSettleTime;                     
   }
-  else if (stateNew == STATE_PERI_OUT_FORW){
+  else if (stateNext == STATE_PERI_OUT_FORW){
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = motorSpeedMaxRpm;      
     stateEndTime = millis() + perimeterOutRevTime + motorZeroSettleTime + 1000;   
   }
-  else if (stateNew == STATE_PERI_OUT_REV){
+  else if (stateNext == STATE_PERI_OUT_REV){
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm/1.25;                    
     stateEndTime = millis() + perimeterOutRevTime + motorZeroSettleTime; 
   }
-  else if (stateNew == STATE_PERI_OUT_ROLL) {
-  	//Ehl
-	  //imuDriveHeading = scalePI(imuDriveHeading + PI); // toggle heading 180 degree (IMU)
-	  if (rollDir == LEFT)
-	  {
-		  imuDriveHeading = scalePI(imuDriveHeading - random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
-		  imuRollHeading = scalePI(imuDriveHeading);
-		  imuRollDir = rollDir;
-	  }
-	  else
-	  {
-		  imuDriveHeading = scalePI(imuDriveHeading + random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
-		  imuRollHeading = scalePI(imuDriveHeading);
-		  imuRollDir = rollDir;
-	  }
-	  stateEndTime = millis() + random(perimeterOutRollTimeMin,perimeterOutRollTimeMax) + motorZeroSettleTime;
-    if (dir == RIGHT)
+  else if (stateNext == STATE_PERI_OUT_ROLL){
+    //imuDriveHeading = scalePI(imuDriveHeading + PI); // toggle heading 180 degree (IMU)
+    if (rollDir == LEFT)
+    {
+      imuDriveHeading = scalePI(imuDriveHeading - random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
+      imuRollHeading = scalePI(imuDriveHeading);
+      imuRollDir = rollDir;
+    }
+    else
+    {
+      imuDriveHeading = scalePI(imuDriveHeading + random((PI / 2), PI )); // random toggle heading between 90 degree and 180 degrees (IMU)
+      imuRollHeading = scalePI(imuDriveHeading);
+      imuRollDir = rollDir;
+    }
+    stateEndTime = millis() + random(perimeterOutRollTimeMin,perimeterOutRollTimeMax) + motorZeroSettleTime;
+    if (rollDir == RIGHT)
     {
       motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
       motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;           
@@ -1244,51 +1232,51 @@ void Robot::setNextState(byte stateNew, byte dir){
       motorLeftSpeedRpmSet = -motorRightSpeedRpmSet; 
     }
   }
-  else if (stateNew == STATE_FORWARD){      
+  else if (stateNext == STATE_FORWARD){      
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = motorSpeedMaxRpm;  
     statsMowTimeTotalStart = true;            
 		setActuator(ACT_CHGRELAY, 0);         
   } 
-  else if (stateNew == STATE_REVERSE)  {
+  else if (stateNext == STATE_REVERSE)  {
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm/1.25;                    
     stateEndTime = millis() + motorReverseTime + motorZeroSettleTime;
   }   
-	else if (stateNew == STATE_BUMPER_REVERSE)  {
+	else if (stateNext == STATE_BUMPER_REVERSE)  {
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = -motorSpeedMaxRpm / 1.25;
     stateEndTime = millis() + motorReverseTime + motorZeroSettleTime;
   }
-  else if (stateNew == STATE_BUMPER_FORWARD)  {
+  else if (stateNext == STATE_BUMPER_FORWARD)  {
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = motorSpeedMaxRpm / 1.25;
     stateEndTime = millis() + motorReverseTime + motorZeroSettleTime;
   }  
-	else if (stateNew == STATE_ROLL) {                  
+	else if (stateNext == STATE_ROLL) {                  
     if (rollDir == LEFT){
       imuDriveHeading = scalePI(imuDriveHeading - PI/2); // toggle heading 90 degree (IMU)
-      imuRollHeading = scalePI(imuDriveHeading);        
+      imuRollHeading = scalePI(imuDriveHeading - PI/2);        
       imuRollDir = rollDir;
     } else {
-        imuDriveHeading = scalePI(imuDriveHeading + PI/2); // toggle heading 90 degree (IMU)
-        imuRollHeading = scalePI(imuDriveHeading);        
-        imuRollDir = rollDir;
+      imuDriveHeading = scalePI(imuDriveHeading + PI/2);
+      imuRollHeading = scalePI(imuDriveHeading + PI/2);        
+      imuRollDir = rollDir;
     }      
     stateEndTime = millis() + random(motorRollTimeMin,motorRollTimeMax) + motorZeroSettleTime;
-    if (dir == RIGHT){
-	    motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
-	    motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;						
+    if (rollDir == RIGHT){
+      motorLeftSpeedRpmSet = motorSpeedMaxRpm/1.25;
+      motorRightSpeedRpmSet = -motorLeftSpeedRpmSet;						
     } else {
-	    motorRightSpeedRpmSet = motorSpeedMaxRpm/1.25;
-	    motorLeftSpeedRpmSet = -motorRightSpeedRpmSet;	
+      motorRightSpeedRpmSet = motorSpeedMaxRpm/1.25;
+      motorLeftSpeedRpmSet = -motorRightSpeedRpmSet;	
     }      
   }  
   if (stateCurr == STATE_STATION_CHARGING) {
 		// always switch off charging relay if leaving state STATE_STATION_CHARGING
 		setActuator(ACT_CHGRELAY, 0); 
 	}
-  if (stateNew == STATE_REMOTE){
+  if (stateNext == STATE_REMOTE){
     motorMowEnable = true;
     //motorMowModulate = false;              
   } 
-  if (stateNew == STATE_STATION){
+  if (stateNext == STATE_STATION){
     setMotorPWM(0,0,false);
     setActuator(ACT_CHGRELAY, 0); 
     setDefaults(); 
@@ -1296,40 +1284,40 @@ void Robot::setNextState(byte stateNew, byte dir){
     loadSaveRobotStats(false);        //save robot stats
        
   }
-  if (stateNew == STATE_STATION_CHARGING){
+  if (stateNext == STATE_STATION_CHARGING){
     setActuator(ACT_CHGRELAY, 1); 
     setDefaults();        
   }
-  if (stateNew == STATE_OFF){
+  if (stateNext == STATE_OFF){
     setActuator(ACT_CHGRELAY, 0);
     setDefaults();   
     statsMowTimeTotalStart = false; // stop stats mowTime counter
     loadSaveRobotStats(false);      //save robot stats
   } 
-  if (stateNew == STATE_TILT_STOP){
+  if (stateNext == STATE_TILT_STOP){
      motorMowEnable = false;    
      motorLeftSpeedRpmSet = motorRightSpeedRpmSet = 0; 
   }
-  if (stateNew == STATE_ERROR){
+  if (stateNext == STATE_ERROR){
     motorMowEnable = false;    
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = 0; 
     setActuator(ACT_CHGRELAY, 0);
     statsMowTimeTotalStart = false;  
     //loadSaveRobotStats(false);   
   }
-  if (stateNew == STATE_PERI_FIND){
+  if (stateNext == STATE_PERI_FIND){
     // find perimeter  => drive half speed      
     motorLeftSpeedRpmSet = motorRightSpeedRpmSet = motorSpeedMaxRpm / 1.5;    
     //motorMowEnable = false;     // FIXME: should be an option?
   }
-  if (stateNew == STATE_PERI_TRACK){        
+  if (stateNext == STATE_PERI_TRACK){        
     //motorMowEnable = false;     // FIXME: should be an option?
     perimeterMagMaxValue = perimeterMagMedian.getHighest();
     setActuator(ACT_CHGRELAY, 0);
     perimeterPID.reset();
     //beep(6);
   }   
-  if (stateNew != STATE_REMOTE){
+  if (stateNext != STATE_REMOTE){
     motorMowSpeedPWMSet = motorMowSpeedMaxPwm;
   }
  
@@ -1359,15 +1347,15 @@ void Robot::loop()  {
     rc.readSerial();
   }
   readSensors(); 
-  checkBattery(); 
-  checkIfStuck();
+  checkBattery(); // STATE_PERI_FIND
+  checkIfStuck(); // STATE_REVERSE, STATE_ROLL, STATE_FORWARD
   checkRobotStats();
   calcOdometry();
   checkOdometryFaults();    
-  checkButton(); 
+  checkButton(); // -> STATE_OFF, STATE_FORWARD, STATE_REMOTE, STATE_PERI_TRACK, STATE_PERI_FIND
   motorMowControl(); 
-  checkTilt(); 
-  
+  checkTilt(); // --> STATE_TILT_STOP
+    
   if (imuUse) imu.update();  
 
   if (gpsUse) { 
@@ -1380,7 +1368,7 @@ void Robot::loop()  {
     rc.run();        
   }
    
-  if (rmcsUse == true and millis() >= nextTimeRMCSInfo ) { 
+  if (rmcsUse == true && millis() >= nextTimeRMCSInfo ) { 
 	   nextTimeRMCSInfo = millis() + 100;
      rmcsPrintInfo(Console);
   }
@@ -1408,7 +1396,7 @@ void Robot::loop()  {
 			if (loopsPerSecLowCounter > 10) { // too long I2C cables can be a reason for this
 				Console.println(F("Error: loopsPerSec too low (check I2C cables)"));
 				addErrorCounter(ERR_CPU_SPEED);
-				setNextState(STATE_ERROR,0);    //mower is switched into ERROR
+				setNextState(STATE_ERROR,0,true);    //mower is switched into ERROR
 			}
 		} else loopsPerSecLowCounter = 0; // reset counter to zero
     if (loopsPerSec > 0) loopsTa = 1000.0 / ((double)loopsPerSec);    
@@ -1691,6 +1679,7 @@ void Robot::loop()  {
       break;      
   } // end switch  
       
+  changeState();
 
   // next line deactivated (issue with RC failsafe)
   //if ((useRemoteRC) && (remoteSwitch < -50)) setNextState(STATE_REMOTE, 0);

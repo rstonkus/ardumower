@@ -558,21 +558,21 @@ void checkMotorFault(){
 	if (digitalRead(pinMotorLeftFault)==LOW){
     robot.addErrorCounter(ERR_MOTOR_LEFT);
     //Console.println(F("Error: motor left fault"));
-    robot.setNextState(STATE_ERROR, 0);
+    robot.setNextState(STATE_ERROR, 0, true);
     //digitalWrite(pinMotorEnable, LOW);
     //digitalWrite(pinMotorEnable, HIGH);
   }
   if  (digitalRead(pinMotorRightFault)==LOW){
     robot.addErrorCounter(ERR_MOTOR_RIGHT);
     //Console.println(F("Error: motor right fault"));
-    robot.setNextState(STATE_ERROR, 0);
+    robot.setNextState(STATE_ERROR, 0, true);
     //digitalWrite(pinMotorEnable, LOW);
     //digitalWrite(pinMotorEnable, HIGH);
   }
   if (digitalRead(pinMotorMowFault)==LOW){  
     robot.addErrorCounter(ERR_MOTOR_MOW);
     //Console.println(F("Error: motor mow fault"));
-    robot.setNextState(STATE_ERROR, 0);
+    robot.setNextState(STATE_ERROR, 0, true);
     //digitalWrite(pinMotorMowEnable, LOW);
     //digitalWrite(pinMotorMowEnable, HIGH);
   }
@@ -654,7 +654,7 @@ int Mower::readSensor(char type){
       if (!readDS1307(datetime)) {
         //Console.println("RTC data error!");        
         addErrorCounter(ERR_RTC_DATA);         
-        setNextState(STATE_ERROR, 0);       
+        setNextState(STATE_ERROR, 0, true);       
       }
       break;
 // rain--------------------------------------------------------------------------------------------------------
@@ -678,7 +678,7 @@ void Mower::setActuator(char type, int value){
       if (!setDS1307(datetime)) {
         //Console.println("RTC comm error!");
         addErrorCounter(ERR_RTC_COMM); 
-        setNextState(STATE_ERROR, 0);       
+        setNextState(STATE_ERROR, 0, true);       
       }
       break;
     case ACT_CHGRELAY: digitalWrite(pinChargeRelay, value); break;
@@ -691,3 +691,5 @@ void Mower::configureBluetooth(boolean quick){
   BluetoothConfig bt;
   bt.setParams(name, BLUETOOTH_PIN, BLUETOOTH_BAUDRATE, quick);
 }
+
+

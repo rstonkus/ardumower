@@ -344,7 +344,7 @@ void Robot::menu(){
           break;          
         case 'e':
           resetErrorCounters();
-          setNextState(STATE_OFF, 0);
+          setNextState(STATE_OFF, 0, true);
           Console.println(F("ALL ERRORS ARE DELETED"));          
           printMenu();
           break;          
@@ -441,7 +441,7 @@ void Robot::readSerial() {
     // String cmd = Console.readString();
      String cmd = waitStringConsole();
      if (cmd.startsWith("$ROS")) {
-       setNextState(STATE_ROS, 0);
+       setNextState(STATE_ROS, 0, true);
        return;
      }
      char ch = cmd[0];
@@ -457,10 +457,10 @@ void Robot::readSerial() {
          Console.println(consoleModeNames[consoleMode]);
          break; 
        case 'h':
-         setNextState(STATE_PERI_FIND, 0); // press 'h' to drive home
+         setNextState(STATE_PERI_FIND, 0, true); // press 'h' to drive home
          break; 
        case 't':
-         setNextState(STATE_PERI_TRACK, 0); // press 'p' to track perimeter
+         setNextState(STATE_PERI_TRACK, 0, true); // press 'p' to track perimeter
          break;
        case 'l':
          bumperLeft = true; // press 'l' to simulate left bumper
@@ -486,17 +486,17 @@ void Robot::readSerial() {
          motorMowEnable = !motorMowEnable; // press 'm' to toggle mower motor
          break;
        case 'c':
-         setNextState(STATE_STATION, 0); // press 'c' to simulate in station
+         setNextState(STATE_STATION, 0, true); // press 'c' to simulate in station
          break;
        case 'a':
-         setNextState(STATE_STATION_CHARGING, 0); // press 't' to simulate in station charging
+         setNextState(STATE_STATION_CHARGING, 0, true); // press 't' to simulate in station charging
          break;
        case '+':
-         setNextState(STATE_ROLL_WAIT, 0); // press '+' to rotate 90 degrees (IMU)
+         setNextState(STATE_ROLL_WAIT, 0, true); // press '+' to rotate 90 degrees (IMU)
          imuRollHeading = scalePI(imuRollHeading + PI/2);
          break;
        case '-':
-         setNextState(STATE_ROLL_WAIT, 0); // press '+' to rotate 90 degrees (IMU)
+         setNextState(STATE_ROLL_WAIT, 0, true); // press '+' to rotate 90 degrees (IMU)
          imuRollHeading = scalePI(imuRollHeading - PI/2);
          break;
        case 'i':
@@ -504,17 +504,17 @@ void Robot::readSerial() {
          imuUse = !imuUse;
          break;
        case '3':
-         setNextState(STATE_REMOTE,0); // press '3' to activate model RC         
+         setNextState(STATE_REMOTE,0, true); // press '3' to activate model RC         
          break;          
        case '0':
          // press '0' for OFF
-         setNextState(STATE_OFF,0);                             
+         setNextState(STATE_OFF,0, true);                             
          break;
        case '1':       
          // press '1' for Automode         
          motorMowEnable = true;
          //motorMowModulate = false;                                           
-         setNextState(STATE_FORWARD,0);          
+         setNextState(STATE_FORWARD,0, true);          
          break; 
       // New commands for RMCS protocol
       case '$':
