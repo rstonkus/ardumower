@@ -269,7 +269,7 @@ void RemoteControl::sendErrorMenu(boolean update){
 void RemoteControl::processErrorMenu(String pfodCmd){      
   if (pfodCmd == "z00") {
     robot->resetErrorCounters();
-    robot->setNextState(STATE_OFF, 0, true);
+    robot->setNextState(STATE_OFF, 0);
   }
   sendErrorMenu(true);
 }
@@ -380,9 +380,9 @@ void RemoteControl::processMotorMenu(String pfodCmd){
     else if (pfodCmd == "a10") { 
       testmode = (testmode + 1) % 3;
       switch (testmode){
-        case 0: robot->setNextState(STATE_OFF,0, true); break;
-        case 1: robot->setNextState(STATE_MANUAL,0, true); robot->motorRightSpeedRpmSet = 0; robot->motorLeftSpeedRpmSet = robot->motorSpeedMaxRpm; break;
-        case 2: robot->setNextState(STATE_MANUAL,0, true); robot->motorLeftSpeedRpmSet  = 0; robot->motorRightSpeedRpmSet = robot->motorSpeedMaxRpm; break;      
+        case 0: robot->setNextState(STATE_OFF,0); break;
+        case 1: robot->setNextState(STATE_MANUAL,0); robot->motorRightSpeedRpmSet = 0; robot->motorLeftSpeedRpmSet = robot->motorSpeedMaxRpm; break;
+        case 2: robot->setNextState(STATE_MANUAL,0); robot->motorLeftSpeedRpmSet  = 0; robot->motorRightSpeedRpmSet = robot->motorSpeedMaxRpm; break;      
       }
     }
   sendMotorMenu(true);
@@ -449,8 +449,8 @@ void RemoteControl::processMowMenu(String pfodCmd){
     else if (pfodCmd == "o10") { 
       testmode = (testmode + 1) % 2;
       switch (testmode){
-        case 0: robot->setNextState(STATE_OFF,0, true);robot->motorMowRpmCurr = 0; robot->motorMowEnable = false; break;
-        case 1: robot->setNextState(STATE_MANUAL,0, true); robot->motorMowEnable = true; break;
+        case 0: robot->setNextState(STATE_OFF,0);robot->motorMowRpmCurr = 0; robot->motorMowEnable = false; break;
+        case 1: robot->setNextState(STATE_MANUAL,0); robot->motorMowEnable = true; break;
       }
     }    
   sendMowMenu(true);
@@ -602,9 +602,9 @@ void RemoteControl::processPerimeterMenu(String pfodCmd){
     else if (pfodCmd.startsWith("e12")) processSlider(pfodCmd, robot->trackingErrorTimeOut, 1);
     else if (pfodCmd.startsWith("e13")) robot->trackingBlockInnerWheelWhilePerimeterStruggling = !robot->trackingBlockInnerWheelWhilePerimeterStruggling;          
     else if (pfodCmd.startsWith("e14")) processSlider(pfodCmd, robot->perimeter.timeOutSecIfNotInside, 1);     
-    else if (pfodCmd.startsWith("e19")) robot->setNextState(STATE_OFF, 0, true);          
-		else if (pfodCmd.startsWith("e20")) robot->setNextState(STATE_PERI_FIND, 0, true);                      
-		else if (pfodCmd.startsWith("e21")) robot->setNextState(STATE_PERI_TRACK, 0, true);                          
+    else if (pfodCmd.startsWith("e19")) robot->setNextState(STATE_OFF, 0);          
+		else if (pfodCmd.startsWith("e20")) robot->setNextState(STATE_PERI_FIND, 0);                      
+		else if (pfodCmd.startsWith("e21")) robot->setNextState(STATE_PERI_TRACK, 0);                          
   sendPerimeterMenu(true);
 }
 
@@ -827,9 +827,9 @@ void RemoteControl::processOdometryMenu(String pfodCmd){
     else if (pfodCmd == "l05") { 
       testmode = (testmode + 1) % 3;
       switch (testmode){
-        case 0: robot->setNextState(STATE_OFF,0, true); break;
-        case 1: robot->setNextState(STATE_MANUAL,0, true); robot->motorRightSpeedRpmSet = 0; robot->motorLeftSpeedRpmSet = robot->motorSpeedMaxRpm; break;
-        case 2: robot->setNextState(STATE_MANUAL,0, true); robot->motorLeftSpeedRpmSet  = 0; robot->motorRightSpeedRpmSet = robot->motorSpeedMaxRpm; break;      
+        case 0: robot->setNextState(STATE_OFF,0); break;
+        case 1: robot->setNextState(STATE_MANUAL,0); robot->motorRightSpeedRpmSet = 0; robot->motorLeftSpeedRpmSet = robot->motorSpeedMaxRpm; break;
+        case 2: robot->setNextState(STATE_MANUAL,0); robot->motorLeftSpeedRpmSet  = 0; robot->motorRightSpeedRpmSet = robot->motorSpeedMaxRpm; break;      
       }
     }
     else if (pfodCmd.startsWith("l06")) processSlider(pfodCmd, robot->motorSpeedMaxRpm, 1);
@@ -1045,30 +1045,30 @@ void RemoteControl::sendCommandMenu(boolean update){
 void RemoteControl::processCommandMenu(String pfodCmd){
   if (pfodCmd == "ro"){
     // cmd: off      
-    robot->setNextState(STATE_OFF, 0, true);          
+    robot->setNextState(STATE_OFF, 0);          
     sendCommandMenu(true);
   } else if (pfodCmd == "rh"){
     // cmd: home      
-    robot->setNextState(STATE_PERI_FIND, 0, true);                      
+    robot->setNextState(STATE_PERI_FIND, 0);                      
     sendCommandMenu(true);
   } else if (pfodCmd == "rr"){
-    robot->setNextState(STATE_MANUAL, 0, true);
+    robot->setNextState(STATE_MANUAL, 0);
     robot->motorLeftSpeedRpmSet += 10; robot->motorRightSpeedRpmSet = -robot->motorLeftSpeedRpmSet;      
     sendCommandMenu(true);  
 } else if (pfodCmd == "rk"){
     // cmd: track perimeter      
-    robot->setNextState(STATE_PERI_TRACK, 0, true);                      
+    robot->setNextState(STATE_PERI_TRACK, 0);                      
     sendCommandMenu(true);
   } else if (pfodCmd == "ra"){
     // cmd: start auto mowing      
     robot->motorMowEnable = true;      
-    robot->setNextState(STATE_FORWARD, 0, true);                
+    robot->setNextState(STATE_FORWARD, 0);                
     sendCommandMenu(true);
   } else if (pfodCmd == "rc"){      
     // cmd: start remote control (RC)      
     robot->motorMowEnable = true;
     robot->motorMowModulate = false;                
-    robot->setNextState(STATE_REMOTE, 0, true);    
+    robot->setNextState(STATE_REMOTE, 0);    
     sendCommandMenu(true);
   } else if (pfodCmd == "rm"){
     // cmd: mower motor on/off    
@@ -1080,7 +1080,7 @@ void RemoteControl::processCommandMenu(String pfodCmd){
   } else if (pfodCmd == "rp"){
     // cmd: pattern
     robot->mowPatternCurr = (robot->mowPatternCurr + 1 ) % 3;      
-    robot->setNextState(STATE_OFF, 0, true);            
+    robot->setNextState(STATE_OFF, 0);            
     sendCommandMenu(true);
   } else if (pfodCmd == "r1"){
     robot->userSwitch1 = !robot->userSwitch1;
@@ -1123,19 +1123,19 @@ void RemoteControl::processCompassMenu(String pfodCmd){
     sendCompassMenu(true);
   } else if (pfodCmd == "cn"){      
     robot->imuRollHeading = 0;
-    robot->setNextState(STATE_ROLL_WAIT, 0, true);            
+    robot->setNextState(STATE_ROLL_WAIT, 0);            
     sendCompassMenu(true);
   } else if (pfodCmd == "cs"){
     robot->imuRollHeading = PI;
-    robot->setNextState(STATE_ROLL_WAIT, 0, true);            
+    robot->setNextState(STATE_ROLL_WAIT, 0);            
     sendCompassMenu(true);
   } else if (pfodCmd == "cw"){
     robot->imuRollHeading = -PI/2;
-    robot->setNextState(STATE_ROLL_WAIT, 0, true);            
+    robot->setNextState(STATE_ROLL_WAIT, 0);            
     sendCompassMenu(true);
   } else if (pfodCmd == "ce"){
     robot->imuRollHeading = PI/2;
-    robot->setNextState(STATE_ROLL_WAIT, 0, true);            
+    robot->setNextState(STATE_ROLL_WAIT, 0);            
     sendCompassMenu(true);
   }
 }
@@ -1152,7 +1152,7 @@ void RemoteControl::processManualMenu(String pfodCmd){
     sendManualMenu(true);
   } else if (pfodCmd == "nr"){      
     // manual: right
-    robot->setNextState(STATE_MANUAL, 0, true);          
+    robot->setNextState(STATE_MANUAL, 0);          
     float sign = 1.0;
     if (robot->motorRightSpeedRpmSet < 0) sign = -1.0;
     if (sign*robot->motorRightSpeedRpmSet >= sign*robot->motorLeftSpeedRpmSet) robot->motorRightSpeedRpmSet  = sign* robot->motorSpeedMaxRpm/2;
@@ -1161,13 +1161,13 @@ void RemoteControl::processManualMenu(String pfodCmd){
     sendManualMenu(true);
   } else if (pfodCmd == "nf"){
     // manual: forward
-    robot->setNextState(STATE_MANUAL, 0, true);          
+    robot->setNextState(STATE_MANUAL, 0);          
     robot->motorLeftSpeedRpmSet  = robot->motorSpeedMaxRpm;
     robot->motorRightSpeedRpmSet = robot->motorSpeedMaxRpm;
     sendManualMenu(true);
   } else if (pfodCmd == "nb"){
     // manual: reverse
-    robot->setNextState(STATE_MANUAL, 0, true);          
+    robot->setNextState(STATE_MANUAL, 0);          
     robot->motorLeftSpeedRpmSet  = -robot->motorSpeedMaxRpm;
     robot->motorRightSpeedRpmSet = -robot->motorSpeedMaxRpm;
     sendManualMenu(true);
@@ -1177,6 +1177,7 @@ void RemoteControl::processManualMenu(String pfodCmd){
     sendManualMenu(true);
   } else if (pfodCmd == "ns"){
     // manual: stop
+    //setNextState(STATE_OFF, 0);          
     robot->motorLeftSpeedRpmSet  =  robot->motorRightSpeedRpmSet = 0;      
     sendManualMenu(true);
   }  

@@ -462,26 +462,26 @@ void Robot::processRMCSCommand(String command){
       
       switch (commandParts[0][0]){
         case '0':
-           setNextState(STATE_OFF, 0, true);
+           setNextState(STATE_OFF, 0);
            break;
 
          case '1':
-            setNextState(STATE_FORWARD, 0, true);
+            setNextState(STATE_FORWARD, 0);
             break;
 
          case '2':
-            setNextState(STATE_PERI_FIND, 0, true);
+            setNextState(STATE_PERI_FIND, 0);
             break;
 
          case '3':
-            setNextState(STATE_REMOTE, 0, true);
+            setNextState(STATE_REMOTE, 0);
             break;
       }     
     }
       
     // Move robot
     if (commandType == "RMMOV") {
-          setNextState(STATE_MANUAL, 0, true); 
+          setNextState(STATE_MANUAL, 0); 
           // enable mow motor?
           if (commandParts[0] == "1")
           {
