@@ -566,12 +566,27 @@ void checkMotorFault(){
     //digitalWrite(pinMotorEnable, LOW);
     //digitalWrite(pinMotorEnable, HIGH);
   }
-  if (digitalRead(pinMotorMowFault)==LOW){  
+  if (digitalRead(pinMotorMowFault)==LOW){
     robot.addErrorCounter(ERR_MOTOR_MOW);
-    //Console.println(F("Error: motor mow fault"));
-    robot.setNextState(STATE_ERROR, 0);
-    //digitalWrite(pinMotorMowEnable, LOW);
-    //digitalWrite(pinMotorMowEnable, HIGH);
+    robot.addErrorCounter(ERR_MOW_SENSE);
+    robot.motorMowEnable = false;
+    robot.motorMowFaultCount++;
+    robot.motorMowSenseCounter++;
+    robot.lastTimeMotorMowStuck = millis();
+    Console.println(F("Error: motor mow fault"));
+    //reset the driver
+    digitalWrite(pinMotorMowEnable, LOW);
+    digitalWrite(pinMotorMowEnable, HIGH);
+    if (robot.motorMowFaultCount == 255) {
+      robot.setNextState(STATE_ERROR, 0);
+    }
+  } else {
+    if (robot.motorMowEnable 
+        && millis() > robot.lastTimeMotorMowStuck + 30000
+        && robot.motorMowSense > 0) {
+      robot.motorMowFaultCount = 0;
+      robot.resetErrorCounter(ERR_MOTOR_MOW);
+    }
   }
 #endif
 }

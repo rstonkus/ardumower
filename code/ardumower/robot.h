@@ -259,6 +259,7 @@ class Robot
     boolean motorMowRpmLastState ;
     boolean motorMowEnable ;  // motor can be temporary disabled if stucked etc. with this
     boolean motorMowForceOff ; // user switch for mower motor on/off has highest priority
+    int motorMowFaultCount;
     // --------- wheel motor state ----------------------------
     // wheel motor speed ( <0 backward, >0 forward); range -motorSpeedMaxRpm..motorSpeedMaxRpm
     float motorAccel  ;  // motor wheel acceleration (warning: do not set too high)
@@ -579,7 +580,8 @@ class Robot
     virtual void beep(int numberOfBeeps, boolean shortbeep);    
     virtual void printInfo(Stream &s);        
     virtual void setUserSwitches(); 
-    virtual void addErrorCounter(byte errType);    
+    virtual void addErrorCounter(byte errType);   
+    virtual void resetErrorCounter(byte errType); 
     virtual void resetErrorCounters();
     virtual void resetMotorFault(){}
 		virtual const char *lastSensorTriggeredName();

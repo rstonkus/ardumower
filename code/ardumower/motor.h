@@ -433,9 +433,9 @@ void Robot::motorMowControl(){
     } 
     else {
       if((errorCounter[ERR_MOW_SENSE] == 0) && (errorCounter[ERR_STUCK] == 0)){
-      // no speed sensor available      
-      mowSpeed = motorMowSpeedPWMSet;
-      setMotorMowPWM(mowSpeed, true);
+        // no speed sensor available      
+        mowSpeed = motorMowSpeedPWMSet;
+        setMotorMowPWM(mowSpeed, true);
       }
     }
   }  
