@@ -541,6 +541,10 @@ void Robot::addErrorCounter(byte errType){
   if (errorCounterMax[errType] < 255) errorCounterMax[errType]++;    
 }
 
+void Robot::resetErrorCounter(byte errType){
+  errorCounter[errType] = errorCounterMax[errType] = 0;
+}
+
 void Robot::resetErrorCounters(){
   Console.println(F("resetErrorCounters"));
   for (int i=0; i < ERR_ENUM_COUNT; i++) errorCounter[i]=errorCounterMax[i]=0;

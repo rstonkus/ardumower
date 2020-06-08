@@ -778,7 +778,7 @@ void Robot::checkCurrent(){
       errorCounterMax[ERR_MOW_SENSE] = 0;
       motor1MowSenseCounter = 0;
       motor2MowSenseCounter = 0;
-      if ( (lastTimeMotorMowStuck != 0) && (millis() >= lastTimeMotorMowStuck + 30000) ) { // wait 30 seconds before switching on again
+      if ( (lastTimeMotorMowStuck != 0) && (millis() >= lastTimeMotorMowStuck + 10000) ) { // wait 30 seconds before switching on again
         errorCounter[ERR_MOW_SENSE] = 0;
         motorMowEnable = true;
 				lastTimeMotorMowStuck = 0;
