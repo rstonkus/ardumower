@@ -574,7 +574,9 @@ void checkMotorFault(){
     robot.addErrorCounter(ERR_MOW_SENSE);
     robot.motorMowEnable = false;
     robot.motorMowFaultCount++;
-    robot.motorMowSenseCounter++;
+    // both fail here
+    robot.motor1MowSenseCounter++;
+    robot.motor2MowSenseCounter++;
     robot.lastTimeMotorMowStuck = millis();
     Console.println(F("Error: motor mow fault"));
     //reset the driver
@@ -586,7 +588,8 @@ void checkMotorFault(){
   } else {
     if (robot.motorMowEnable 
         && millis() > robot.lastTimeMotorMowStuck + 30000
-        && robot.motorMowSense > 0) {
+        && robot.motor1MowSense > 0
+        && robot.motor2MowSense > 0) {
       robot.motorMowFaultCount = 0;
       robot.resetErrorCounter(ERR_MOTOR_MOW);
     }
