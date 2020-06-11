@@ -1258,10 +1258,10 @@ void Robot::setNextState(byte stateNew, byte dir){
   }  
 	else if (stateNew == STATE_ROLL) {                  
       if (rollDir == LEFT){
-        imuDriveHeading = scalePI(imuDriveHeading - PI/2.0); // toggle heading 180 degree (IMU)
+        imuDriveHeading = scalePI(imuDriveHeading - PI/2); // toggle heading 90 degree (IMU)
         imuRollHeading = scalePI(imuDriveHeading);        
       } else {
-        imuDriveHeading = scalePI(imuDriveHeading + PI/2.0); // toggle heading 180 degree (IMU)
+        imuDriveHeading = scalePI(imuDriveHeading + PI/2); // toggle heading 90 degree (IMU)
         imuRollHeading = scalePI(imuDriveHeading);
       }      
       stateEndTime = millis() + random(motorRollTimeMin,motorRollTimeMax) + motorZeroSettleTime;
@@ -1500,7 +1500,6 @@ void Robot::loop()  {
       break;
     case STATE_ROLL_WAIT:
       // making a roll (left/right)            
-      //if (abs(distancePI(imuYaw, imuRollHeading)) < PI/36) setNextState(STATE_OFF,0);				
       break;
     case STATE_CIRCLE:
       // driving circles
